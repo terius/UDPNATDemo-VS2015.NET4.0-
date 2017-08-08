@@ -44,6 +44,7 @@ namespace UDPNATClient
             //    IOControlCode.DataToRead
                 mUdpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
                 mUdpClient.Client.ReceiveBufferSize = 4096;
+
                 //    mUdpClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
                 RunReceive();
                 SendUDP((isTeacher ? "hello" : "hello"), IP, Port);
