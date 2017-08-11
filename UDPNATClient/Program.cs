@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ZeroMQ;
 
 namespace UDPNATClient
 {
@@ -15,16 +16,17 @@ namespace UDPNATClient
         static int RemoteClientPort;
         static bool isTeacher = System.Configuration.ConfigurationManager.AppSettings["ProgramType"] == "TECH" ? true : false;
         static bool autoSend = System.Configuration.ConfigurationManager.AppSettings["AutoSend"] == "1" ? true : false;
+        static string serverIP = System.Configuration.ConfigurationManager.AppSettings["ServerIP"];
         static void Main(string[] args)
         {
             try
             {
+                TestZeroMQ();
 
-
-
+                return;
 
                 // Console.WriteLine("请输入服务器IP");
-                string IP = System.Configuration.ConfigurationManager.AppSettings["ServerIP"];
+
                 //  Console.WriteLine("请输入服务器端口");
                 int Port = int.Parse(System.Configuration.ConfigurationManager.AppSettings["ServerPort"]);
                 IPEndPoint fLocalIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -41,13 +43,13 @@ namespace UDPNATClient
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
                 uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            //    IOControlCode.DataToRead
+                //    IOControlCode.DataToRead
                 mUdpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
                 mUdpClient.Client.ReceiveBufferSize = 4096;
 
                 //    mUdpClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
                 RunReceive();
-                SendUDP((isTeacher ? "hello" : "hello"), IP, Port);
+                SendUDP((isTeacher ? "hello" : "hello"), serverIP, Port);
                 //  byte[] fHelloData = Encoding.UTF8.GetBytes("hello");
                 //  mUdpClient.Send(fHelloData, fHelloData.Length, IP, Port);
 
@@ -91,6 +93,66 @@ namespace UDPNATClient
                 Console.WriteLine(ex.ToString());
             }
             Console.ReadKey();
+        }
+
+        //private static int SendVarData( byte[] data)
+        //{
+        //    int total = 0;
+        //    int size = data.Length;
+        //    int dataleft = size;
+        //    int sent;
+        //    byte[] datasize = new byte[4];
+        //    datasize = BitConverter.GetBytes(size);
+        //    sent = mUdpClient.Send(datasiz,e);
+        //    while (total < size)
+        //    {
+        //        sent = s.Send(data, total, dataleft, SocketFlags.None);
+        //        total += sent;
+        //        dataleft -= sent;
+        //    }
+        //    return total;
+        //}
+
+        private static void TestZeroMQ()
+        {
+            if (isTeacher)
+            {
+                using (var context = ZmqContext.Create())
+                {
+                    using (var socket = context.CreateSocket(ZeroMQ.SocketType.PULL))
+                    {
+                        socket.Bind("tcp://127.0.0.1:44444");
+                        Console.WriteLine("已监听:tcp://127.0.0.1:44444 ");
+                        while (true)
+                        {
+                            Thread.Sleep(200);
+                            var rcvdMsg = socket.Receive(Encoding.UTF8);
+                            Console.WriteLine("Received: " + rcvdMsg);
+                            //  socket.Send("ok", Encoding.UTF8);
+                            //   Console.WriteLine("send: ok");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (var context = ZmqContext.Create())
+                {
+                    using (var socket = context.CreateSocket(ZeroMQ.SocketType.PUSH))
+                    {
+                        socket.Connect("tcp://" + serverIP + ":44444");
+                        while (true)
+                        {
+                            string msg = Console.ReadLine();
+                            socket.Send(msg, Encoding.UTF8);
+                            //  var replyMsg = socket.Receive(Encoding.UTF8);
+                            // Console.WriteLine("Received: " + replyMsg);
+                        }
+
+                        // var replyMsg = socket.Receive(Encoding.UTF8);
+                    }
+                }
+            }
         }
 
         private static void SendUDP(string content, string ip, int port)

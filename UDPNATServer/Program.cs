@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ZeroMQ;
 
 namespace UDPNATServer
 {
@@ -17,6 +18,7 @@ namespace UDPNATServer
         {
             try
             {
+                
                 IPEndPoint fLocalIPEndPoint = new IPEndPoint(IPAddress.Any, port);
                 mUdpReciver = new UdpClient(fLocalIPEndPoint);
                 uint IOC_IN = 0x80000000;
@@ -29,6 +31,7 @@ namespace UDPNATServer
                 while (true)
                 {
                     string Content = Console.ReadLine();
+
                     foreach (string item in ClientIPPort)
                     {
                         string[] ClientAddress = item.Split(':');
@@ -42,6 +45,29 @@ namespace UDPNATServer
             {
                 Console.WriteLine("UDP服务启动失败,监听端口：" + port);
                 Console.WriteLine(ex.ToString());
+            }
+            Console.ReadKey();
+        }
+
+        private static void TestZeroMQ()
+        {
+            using (var context = ZmqContext.Create())
+            {
+                using (var socket = context.CreateSocket(ZeroMQ.SocketType.REP))
+                {
+
+                    socket.Bind("tcp://127.0.0.1:44444");
+                    Console.WriteLine("已监听:tcp://127.0.0.1:44444 ");
+                    while (true)
+                    {
+                        Thread.Sleep(200);
+                        var rcvdMsg = socket.Receive(Encoding.UTF8);
+                        Console.WriteLine("Received: " + rcvdMsg);
+                        var replyMsg = "replyMsg" + DateTime.Now.Ticks;
+                        Console.WriteLine("Sending : " + replyMsg + Environment.NewLine);
+                        socket.Send(replyMsg, Encoding.UTF8);
+                    }
+                }
             }
         }
 
@@ -67,7 +93,7 @@ namespace UDPNATServer
                             {
                                 if (ClientIPPort.Count < 2)
                                 {
-                                    if (ClientIPPort.Contains(fIPAddress) == false)
+                                    if (!ClientIPPort.Contains(fIPAddress))
                                     {
                                         ClientIPPort.Add(fIPAddress);
                                         Console.WriteLine("客户端注册成功,当前已注册客户端数量：" + ClientIPPort.Count);
