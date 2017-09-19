@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UDPNATServer", "UDPNATServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UDPNATClient", "UDPNATClient\UDPNATClient.csproj", "{8DB442D6-CADC-4273-B729-B3D2CEA9F4A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenLib", "ScreenLib\ScreenLib.csproj", "{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{8DB442D6-CADC-4273-B729-B3D2CEA9F4A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DB442D6-CADC-4273-B729-B3D2CEA9F4A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{8DB442D6-CADC-4273-B729-B3D2CEA9F4A7}.Release|x86.Build.0 = Release|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Debug|x86.Build.0 = Debug|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{9492DBEC-DFC8-4EE6-81BB-B096060E9EF6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

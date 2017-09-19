@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScreenLib;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,9 +22,12 @@ namespace UDPNATClient
         {
             try
             {
-                TestZeroMQ();
+                RemoteClientIP = serverIP;
+                RemoteClientPort = 55556;
 
-                return;
+                //  TestZeroMQ();
+
+                //    return;
 
                 // Console.WriteLine("请输入服务器IP");
 
